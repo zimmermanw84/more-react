@@ -19,14 +19,29 @@
         componentDidMount: function() {
           this.getServerFriends();
         },
+        handleSubmitEvent: function() {
+        //   TODO: add form event handling
+        },
         render: function() {
             return (
                 <div>
                     <h2>Name: {this.state.username}</h2>
                     <ShowList friends={this.state.friends} />
+                    <AddFriendForm submitEvent={this.handleSubmitEvent} />
                 </div>
             )
         }
+    });
+
+    var AddFriendForm = React.createClass({
+       // TODO: Add form handling function
+       render: function() {
+           return (
+               <form>
+                    Add Friend: <input type="text" />
+               </form>
+           )
+       }
     });
 
     var ShowList = React.createClass({
@@ -37,7 +52,6 @@
         },
         render: function() {
             var allFriends = this.props.friends;
-            console.log(this.props)
                return (
                    <ol>
                        {allFriends.map(function(friend) {
