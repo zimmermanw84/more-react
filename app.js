@@ -4,8 +4,20 @@
         getInitialState: function() {
            return {
                username: "Guest",
-               friends: ['Chewy']
+               friends: []
            }
+        },
+        getServerFriends: function() {
+          $.ajax({
+              url: this.props.url,
+              type: "GET",
+              success: function(data) {
+                  this.setState({friends: data});
+              }.bind(this)
+          })
+        },
+        componentDidMount: function() {
+          this.getServerFriends();
         },
         render: function() {
             return (
@@ -24,11 +36,12 @@
             }
         },
         render: function() {
-            var allFrends = this.props.friends;
+            var allFriends = this.props.friends;
+            console.log(this.props)
                return (
                    <ol>
-                       {allFrends.map(function(friend) {
-                           return <li key={friend.id}>{friend}</li>
+                       {allFriends.map(function(friend) {
+                           return <li key={friend.id}>{friend.content}</li>
                        })}
                    </ol>
                );
@@ -38,7 +51,7 @@
 
 
     return React.render(
-      <FriendsContainer />,
+      <FriendsContainer url="http://localhost:3000/questions" />,
         document.getElementById('app')
     );
 
