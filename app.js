@@ -19,15 +19,24 @@
         componentDidMount: function() {
           this.getServerFriends();
         },
-        handleSubmitEvent: function() {
+        submitFormAddFriend: function(friendName) {
         //   TODO: add form event handling
+            $.ajax({
+                url: this.props.url,
+                type: "POST",
+                data: friendName,
+                success: function(data) {
+                    var newState = this.state.friends.concat([data]);
+                    this.setState({friends: newState});
+                }.bind(this)
+            })
         },
         render: function() {
             return (
                 <div>
                     <h2>Name: {this.state.username}</h2>
                     <ShowList friends={this.state.friends} />
-                    <AddFriendForm submitEvent={this.handleSubmitEvent} />
+                    <AddFriendForm submitEvent={this.submitFormAddFriend} />
                 </div>
             )
         }
@@ -35,10 +44,19 @@
 
     var AddFriendForm = React.createClass({
        // TODO: Add form handling function
+       submitAddFriendForm: function(event) {
+           event.preventDefault();
+           var friendToAdd = React.findDOMNode(this.refs.friendName).value.trim();
+
+           //console.log(friendToAdd);
+           this.props.submitEvent({content: friendToAdd});
+           React.findDOMNode(this.refs.friendName).value = "";
+       },
        render: function() {
            return (
-               <form>
-                    Add Friend: <input type="text" />
+               <form method="POST" onSubmit={this.submitAddFriendForm} >
+                   Add Friend: <input type="text" ref="friendName" />
+                   <input type="submit" value="Add Friend" />
                </form>
            )
        }
