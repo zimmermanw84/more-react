@@ -5,7 +5,6 @@
     var FriendsContainer = React.createClass({
         getInitialState: function() {
            return {
-               username: "Guest",
                friends: []
            }
         },
@@ -35,9 +34,8 @@
         render: function() {
             return (
                 <div>
-                    <h2>Name: {this.state.username}</h2>
                     <AddFriendForm submitEvent={this.submitFormAddFriend} />
-                    <ShowList friends={this.state.friends} />
+                    <ShowList friends={this.state.friends} getCurrentFriends={this.getServerFriends} />
                 </div>
             )
         }
@@ -81,9 +79,7 @@
                 url: "http://localhost:3000/questions/" + id,
                 type: "DELETE",
                 success: function(data) {
-                   var nodeToDelete = React.findDOMNode(this.keys)
-                    console.log(nodeToDelete)
-
+                    this.props.getCurrentFriends();
                 }.bind(this)
             })
         },
@@ -108,10 +104,58 @@
         }
     });
 
+    var UserContainer = React.createClass({
+        getInitialState: function() {
+          return {
+            currentUser: { userName: "Guest" }
+          }
+        },
+        submitNewUser: function(userName) {
+            this.setState({currentUser: {userName: userName }})
+        },
+        render: function() {
+            return (
+                <section>
+                    <h1>{this.state.currentUser.userName}</h1>
+                    <ChangeUserName updateNewUser={this.submitNewUser} />
+                </section>
+            )
+        }
+    });
 
-    return React.render(
-      <FriendsContainer url="http://localhost:3000/questions" />,
-        document.getElementById('app')
+    // TODO: break these out into seperate modules
+
+    var ChangeUserName = React.createClass({
+        handleNewUser: function(event) {
+            event.preventDefault();
+            var newName = React.findDOMNode(this.refs.userName).value.trim();
+            this.props.updateNewUser(newName);
+            React.findDOMNode(this.refs.userName).value = "";
+        },
+        magicNameStuff: function() {
+            var newName = React.findDOMNode(this.refs.userName).value.trim();
+            if (newName === "") newName = "Guest";
+            this.props.updateNewUser(newName);
+        },
+        render: function() {
+            return (
+                <form onSubmit={this.handleNewUser} onChange={this.magicNameStuff} >
+                    Enter Name: <input type="text" ref="userName" />
+                    <input type="submit" value="Change Name" />
+                </form>
+            )
+        }
+    });
+
+    return (
+        React.render(
+            <UserContainer />,
+            document.getElementById('user-container')
+        ),
+        React.render(
+            <FriendsContainer url="http://localhost:3000/questions" />,
+            document.getElementById('friends-container')
+        )
     );
 
 }();
