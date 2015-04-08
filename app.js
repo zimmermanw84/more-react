@@ -1,5 +1,7 @@
 !function() {
 
+    "use strict";
+
     var FriendsContainer = React.createClass({
         getInitialState: function() {
            return {
@@ -20,7 +22,6 @@
           this.getServerFriends();
         },
         submitFormAddFriend: function(friendName) {
-        //   TODO: add form event handling
             $.ajax({
                 url: this.props.url,
                 type: "POST",
@@ -35,20 +36,17 @@
             return (
                 <div>
                     <h2>Name: {this.state.username}</h2>
-                    <ShowList friends={this.state.friends} />
                     <AddFriendForm submitEvent={this.submitFormAddFriend} />
+                    <ShowList friends={this.state.friends} />
                 </div>
             )
         }
     });
 
     var AddFriendForm = React.createClass({
-       // TODO: Add form handling function
        submitAddFriendForm: function(event) {
            event.preventDefault();
            var friendToAdd = React.findDOMNode(this.refs.friendName).value.trim();
-
-           //console.log(friendToAdd);
            this.props.submitEvent({content: friendToAdd});
            React.findDOMNode(this.refs.friendName).value = "";
        },
@@ -62,18 +60,47 @@
        }
     });
 
+    var DeleteFriendForm = React.createClass({
+        handleDeleteEvent: function(event) {
+            event.preventDefault();
+            var id = this.props.id;
+            this.props.deleteFriend(id)
+        },
+        render: function() {
+           return (
+           <form method="DELETE" onSubmit={this.handleDeleteEvent} >
+               <input type="submit" value="DELETE FOREVER" />
+           </form>
+           )
+       }
+    });
+
     var ShowList = React.createClass({
+        deleteFriendForm: function(id) {
+            $.ajax({
+                url: "http://localhost:3000/questions/" + id,
+                type: "DELETE",
+                success: function(data) {
+                   var nodeToDelete = React.findDOMNode(this.keys)
+                    console.log(nodeToDelete)
+
+                }.bind(this)
+            })
+        },
         getInitialState: function() {
             return {
                 friends: this.props.friends
             }
         },
         render: function() {
+            var _this = this;
             var allFriends = this.props.friends;
                return (
                    <ol>
                        {allFriends.map(function(friend) {
-                           return <li key={friend.id}>{friend.content}</li>
+                           return <li key={friend.id}>{friend.content}
+                                    <DeleteFriendForm id={friend.id} deleteFriend={_this.deleteFriendForm} />
+                                  </li>
                        })}
                    </ol>
                );
