@@ -104,26 +104,31 @@
         }
     });
 
+    // TODO: break these out into seperate modules / components
+
     var UserContainer = React.createClass({
         getInitialState: function() {
           return {
-            currentUser: { userName: "Guest" }
+              currentUser: { userName: "Guest" },
           }
         },
         submitNewUser: function(userName) {
             this.setState({currentUser: {userName: userName }})
         },
+        hideChangeUserForm: function() {
+
+        },
         render: function() {
             return (
                 <section>
                     <h1>{this.state.currentUser.userName}</h1>
-                    <ChangeUserName updateNewUser={this.submitNewUser} />
+                    <ChangeUserName updateNewUser={this.submitNewUser} onSubmit={this.hideChangeUserForm} />
+                    <LogOutButton />
                 </section>
             )
         }
     });
 
-    // TODO: break these out into seperate modules
 
     var ChangeUserName = React.createClass({
         handleNewUser: function(event) {
@@ -144,6 +149,21 @@
                     <input type="submit" value="Change Name" />
                 </form>
             )
+        }
+    });
+
+    var LogOutButton = React.createClass({
+        getInitalState: function() {
+            return {
+                display:"block"
+            }
+        },
+        render: function() {
+            //console.log(this)
+           // FIXME: the state is udefined
+           return (
+               <button style={this.state.display} >Log Out</button>
+           )
         }
     });
 
