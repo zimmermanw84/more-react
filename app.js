@@ -28,7 +28,11 @@
                 success: function(data) {
                     var newState = this.state.friends.concat([data]);
                     this.setState({friends: newState});
+                }.bind(this),
+                error: function(xhr, status, err) {
+                    alert(this.props.url, status, err.toString())
                 }.bind(this)
+            //    TODO: Break out error handling function. Keep it DRY. Keep this binding OBVIOUSLY
             })
         },
         render: function() {
@@ -67,7 +71,7 @@
         render: function() {
            return (
            <form method="DELETE" onSubmit={this.handleDeleteEvent} >
-               <input type="submit" value="DELETE FOREVER" />
+               <input type="submit" value="DELETE" />
            </form>
            )
        }
@@ -82,6 +86,7 @@
                     this.props.getCurrentFriends();
                 }.bind(this)
             })
+        //    TODO: Add error handling
         },
         getInitialState: function() {
             return {
