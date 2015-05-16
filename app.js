@@ -32,7 +32,6 @@
                 error: function(xhr, status, err) {
                     alert(this.props.url, status, err.toString())
                 }.bind(this)
-            //    TODO: Break out error handling function. Keep it DRY. Keep this binding OBVIOUSLY
             })
         },
         render: function() {
@@ -83,6 +82,7 @@
                 url: "http://localhost:3000/questions/" + id,
                 type: "DELETE",
                 success: function(data) {
+                  // Not really the react way to rerender the page: Should set state
                     this.props.getCurrentFriends();
                 }.bind(this)
             })
@@ -164,10 +164,10 @@
             }
         },
         render: function() {
-            //console.log(this)
+            console.log(this)
            // FIXME: the state is udefined
            return (
-               <button style={this.state.display} >Log Out</button>
+               <button style={{display:"block"}} >Log Out</button>
            )
         }
     });
